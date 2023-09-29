@@ -2,7 +2,6 @@
 
 :root {
     --main-color:#311b92;
-
 }
 
 * {
@@ -12,6 +11,15 @@
     list-style-type: none;
     text-decoration: none;
     font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3 {
+    text-align: center;
+}
+
+.content{
+    padding-left: 15%; 
+    padding-right: 15%;
 }
 
 /*Scroll Bar*/
@@ -51,7 +59,7 @@
 }
 
 .sidebar-brand {
-    height: 90px;
+    height: 83px;
     padding: 1rem 0rem 1rem 2rem;
     color: #ffffff;
     align-items: center;
@@ -65,32 +73,34 @@
 }
 
 .sidebar-menu {
-    margin-top: 1rem;
+    margin-top: 0rem;
     transition: .3s;
 }
 
 .sidebar-menu li {
     width: 100%;
-    margin-bottom: 1.2rem;
+    margin-bottom: .2rem;
     padding-left: 1rem;
 }
 
 .sidebar-menu a {
     display: block;
-    color: #ffffff;
-    font-size: 1.1rem;
+    color: #f1f5f9;
+    font-size: 1.2rem;
     padding-left: 1rem;
+    padding-top:  1rem;
+    padding-bottom: 1rem;
     transition: 0.3s;
 }
 
 .sidebar-menu a span:first-child{
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding-right: 1rem;
     
 }
 
 .tabsButton--active a {
-    background-color: #ffffff;
+    background-color: #f1f5f9;
     padding-top:  1rem;
     padding-bottom: 1rem;
     color: var(--main-color);
@@ -100,7 +110,7 @@
 
 
 .sidebar-menu a:hover {
-    background-color: #f1f5f9;
+    background-color: #ffffff;
     padding-top:  1rem;
     padding-bottom: 1rem;
     color: var(--main-color);
@@ -287,26 +297,41 @@ main {
 }
 
 table {
-    width: 100%;
+    width: 100%!important;
     border-collapse: collapse;
 }
 
-.table-responsive {
-    width: 100%;
+.dt-responsive {
+    width: 100%!important;
     overflow-x: auto;
+}
+
+thead th, tfoot th {
+    text-align: right!important;
+}
+
+thead th:first-child, tfoot th:first-child {
+    text-align: left!important;
 }
 
 thead tr {
     border-bottom: 1px solid #f0f0f0;
+    text-align: right;
 }
  thead td {
     font-weight: 700;
  }
 
+td:first-child {
+    text-align: left;
+}
+
 td {
     padding: .5rem 1rem;
     font-size: .8rem;
     color: #222;
+    justify-content: space-between;
+    text-align: right;
 }
 
 td .status {
@@ -315,11 +340,6 @@ td .status {
     width: 10px;
     border-radius: 50%;
     margin-right: 1rem;
-}
-
-tr td:last-child {
-    display: flex;
-    align-items: center;
 }
 
 .status.green {
@@ -397,12 +417,12 @@ tr td:last-child {
 }
 
 .dataTables_filter {
-    display: block;
+    display: grid;
+    float: right;
 }
 
 .dataTables_filter label {
     display: inline-block;
-    padding: 5rem 1rem 1rem 1rem;
     font-size: .8rem;
 }
 
@@ -423,21 +443,23 @@ tr td:last-child {
     cursor: pointer;
 }
 
-
-.pagination {
-    text-align: right;
+.dt-buttons {
+    float: left;
+    border: none;
 }
 
-.pagination li {
-    display: inline-block;
+
+.dt-button {
+    padding: 5px 10px;
+    background-color: #311b92;
     text-decoration: none;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2px;
-    
+    color: #ffffff !important;
+    border-radius: 5px;
+    font-size: .8rem;
+    cursor: pointer;
 }
 
-.pagination li a {
+.paginate_button {
     padding: 5px 10px;
     background-color: #311b92;
     text-decoration: none;
@@ -446,11 +468,33 @@ tr td:last-child {
     font-size: .8rem;
 }
 
-.pagination li a:hover {
+.paginate_button:hover {
     background-color: #000063 !important;
-   
+    cursor: pointer;
 }
 
+.paginate_button.current {
+    background-color: #000063 !important;
+    cursor: pointer;
+}
+
+#Progress {
+    width: 30%;
+    border-radius: 5px;
+    background-color: #ddd;
+    position: absolute;
+    bottom: 10px;
+}
+  
+#PB {
+    width: 0%;
+    height: 30px;
+    border-radius: 5px;
+    background-color: #04AA6D;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+}
 
 
 /*Window size*/
@@ -588,5 +632,22 @@ tr td:last-child {
     }
     .user-wrapper small, .user-wrapper h4 {
         display: none;
+    }
+}
+
+@media print {
+    .noprint, .noprint *, .dt-buttons {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0px !important;
+    }
+    .content {
+        padding-left: 0% !important; 
+        padding-right: 0% !important;
+    }
+    canvas {
+        height: 300px !important;
+        width: 90% !important;
     }
 }
