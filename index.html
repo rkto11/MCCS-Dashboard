@@ -409,10 +409,18 @@
                 <canvas id="tree" style="width: 100%;"></canvas>
 
                 <!--Toggles here-->
-                <button onclick="toggler('region')">Toggle Region</button>
-                <button onclick="toggler('installation')">Toggle Installation</button>
-                <button onclick="toggler('naf_cat')">Toggle NAF Category</button>
-                <button onclick="myChart.update()">Update</button>
+                <button onclick="toggler('region')">Region</button>
+                <button onclick="toggler('installation')">Installation</button>
+                <button onclick="toggler('naf_cat')">NAF Category</button>
+                <button onclick="toggler('op_activity')">Op Activity</button>
+                <button onclick="toggler('fac_num')">Facility Number</button>
+                <button onclick="toggler('use_desc')">Use Description</button>
+                <br>
+                <button onclick="toggleKey('FSRM')">FSRM</button>
+                <button onclick="toggleKey('sus')">Sustainment</button>
+                <button onclick="toggleKey('RM_corrected')">R&M</button>
+                <br>
+                <button onclick="resetTree()">Reset</button>
             </div>
 
             <div class="content upload-content" data-tab="6">
@@ -505,8 +513,8 @@
         type: 'treemap',
         data: {
             datasets: [{
-                label: 'Region',
-                tree: [1,2,3]}]
+                label: 'FSRM',
+                tree: [1]}]
             }
     };
     const myChart = new Chart(treectx, defaultconfig);
@@ -515,6 +523,9 @@
     var selectedFile;
     var df_final;
     var GROUPS = ["region"]; 
+    var clickThroughData;
+    var clickThroughLabel = "MCCS";
+    var treeKey = "FSRM";
 
     document
         .getElementById("uploadfile")
@@ -552,7 +563,7 @@
                         document.getElementById("PB").style.width = "66%";
                         createQratingTables(df_final[0]);
                         document.getElementById("PB").style.width = "100%";
-
+                        clickThroughData = df_final[1];
                         initTree(df_final[1]);
                     }
                     else {
@@ -563,41 +574,13 @@
             }
         });
 
-    //create functions to be called either here or in separate js file
-    //chart js update prob needs to be created here
-    //Util Prof Data Process
-    var selectedFile2;
-    document
-        .getElementById("uploadfile2")
-        .addEventListener("change", function(e) {
-            selectedFile2 = e.target.files[0];
-    });
     
-    document
-        .getElementById("submitUpload2")
-        .addEventListener("click", function() {
-            if(selectedFile2) {
-                console.log("File Read");
-                var fileReader = new FileReader();
-                fileReader.onload = function(event) {
-                    var data = event.target.result;
-                    var workbook = XLSX.read(data, {
-                        type: "binary"
-                    });
-                   
-                    let UtilProf = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["UtilProf"]);
-                    processUtilProf(UtilProf);
-                };
-                fileReader.readAsBinaryString(selectedFile2);
-            }
-    });
-
     
     function initTree(dataArray) {
         var treedatasets = [{
-            label: 'Region',
+            label: "MCCS",
             tree: dataArray,
-            key:"FSRM",
+            key: treeKey,
             groups: GROUPS,
             borderWidth: 0,
             borderRadius: 6,
@@ -628,7 +611,7 @@
                         label(item) {
                             const dataItem = item.raw;
                             const obj = dataItem._data;
-                            const label = obj.installation || obj.region || obj.op_activity;
+                            const label = obj.installation || obj.region || obj.op_activity || obj.fac_num || obj.use_desc;
                             return label + ': $' + dataItem.v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                         }
                     }
@@ -652,12 +635,55 @@
 
         function clickHandler(click) {
             const bar = myChart.getElementsAtEventForMode(click, 'nearest', { interest: true }, true);
-            
-            console.log(bar[0]);
-            console.log(bar[0].element);
-            console.log(bar[0].index);
+            const barindex = bar[0].index;
+            const datapath = myChart.data.datasets[0].data[barindex]._data.path;
+            var highestpath = datapath.split('.')[0];
+            clickthrough(highestpath);
             //want to get to raw._data.path 
         }
+
+        function clickthrough(path) {
+            const highestGroup = GROUPS[0];
+            console.log(highestGroup + ' ' + path);
+            var outputData = [];
+            for(i=0; i<clickThroughData.length; i++) {
+                if(clickThroughData[i][highestGroup] === path) {
+                    outputData.push(clickThroughData[i]);
+                }
+            }
+            console.log(outputData.length);
+            
+            if (highestGroup === 'region') {GROUPS = ['installation']; }
+            if (highestGroup === 'installation') {GROUPS = ['naf_cat']; }
+            if (highestGroup === 'naf_cat') {GROUPS = ['op_activity']; }
+            if (highestGroup === 'op_activity') {GROUPS = ['fac_num', 'use_desc']; }
+
+            clickThroughLabel += " / " + path;
+
+            var treedatasets = [{
+                label: clickThroughLabel,
+                tree: outputData,
+                key: treeKey,
+                groups: GROUPS,
+                borderWidth: 0,
+                borderRadius: 6,
+                spacing:1,
+                backgroundColor: "rgba(3, 138, 255, 0.5)",
+                labels: {
+                    align: 'left',
+                    display: true,
+                    formatter: (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')],
+                    color: ['white', 'whiteSmoke'],
+                    font: [{size: 14, weight: 'bold'}, {size: 12}],
+                    position: 'top'
+                }
+            }];
+
+        clickThroughData = outputData;
+
+        myChart.data.datasets = treedatasets;
+        myChart.update();
+    }
 
         treectx.onclick = clickHandler;
     }
@@ -673,6 +699,66 @@
         myChart.config.data.datasets.groups = GROUPS;
         myChart.update();
     }
+
+    function toggleKey(key) {
+        treeKey = key;
+        var treedatasets = [{
+            label: clickThroughLabel,
+            tree: clickThroughData,
+            key: treeKey,
+            groups: GROUPS,
+            borderWidth: 0,
+            borderRadius: 6,
+            spacing:1,
+            backgroundColor: "rgba(3, 138, 255, 0.5)",
+            labels: {
+                align: 'left',
+                display: true,
+                formatter: (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')],
+                color: ['white', 'whiteSmoke'],
+                font: [{size: 14, weight: 'bold'}, {size: 12}],
+                position: 'top'
+            }
+        }];
+        myChart.data.datasets = treedatasets;
+        myChart.update();
+    }
+    
+    function resetTree() {
+        GROUPS = ["region"];
+        clickThroughData = df_final[1];
+        clickThroughLabel = "MCCS";
+        initTree(df_final[1]);
+    }
+
+    //create functions to be called either here or in separate js file
+    //chart js update prob needs to be created here
+    //Util Prof Data Process
+    var selectedFile2;
+    document
+        .getElementById("uploadfile2")
+        .addEventListener("change", function(e) {
+            selectedFile2 = e.target.files[0];
+    });
+    
+    document
+        .getElementById("submitUpload2")
+        .addEventListener("click", function() {
+            if(selectedFile2) {
+                console.log("File Read");
+                var fileReader = new FileReader();
+                fileReader.onload = function(event) {
+                    var data = event.target.result;
+                    var workbook = XLSX.read(data, {
+                        type: "binary"
+                    });
+                   
+                    let UtilProf = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["UtilProf"]);
+                    processUtilProf(UtilProf);
+                };
+                fileReader.readAsBinaryString(selectedFile2);
+            }
+    });
 
 </script>
 </html>

@@ -1038,8 +1038,8 @@ function goRPMProcess(Fac, Util, ICI) {
                 "alt_total_measure": parseFloat(Util[i]["iNFADS Adq Alternate Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Sub Alternate Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Iadq Alternate Measure"] ?? 0),
                 "other_total_measure": parseFloat(Util[i]["iNFADS Adq Other Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Sub Other Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Iadq Other Measure"] ?? 0),
                 "other_unit_measure": other_um,
-                "sus": parseFloat(Util[i][susTag] ?? 0),
-                "RM_corrected": rm,
+                "sus": Math.round(parseFloat(Util[i][susTag] ?? 0)),
+                "RM_corrected": Math.round(rm),
                 "FSRM": FSRM
             });
         }
