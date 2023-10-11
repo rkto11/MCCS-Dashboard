@@ -1121,9 +1121,9 @@ function goRPMProcess(Fac, Util, ICI) {
     }
     console.log(df_final.length);
     console.log(UtilOutput.length);
-    let ct = document.getElementById("MCCSFacUtilNum");
-    var totalsHTML = "<h3>Number of Facilities: " + df_final.length + "</h3>" +"<h3>Number of Utilizations: " + UtilOutput.length + "</h3>";
-    ct.innerHTML = totalsHTML;
+    let divout = document.getElementById("MCCSFacUtilNum");
+    const totalsHTML = "<h3>Number of Facilities: " + df_final.length + "</h3>" +"<h3>Number of Utilizations: " + UtilOutput.length + "</h3>";
+    divout.innerHTML = totalsHTML;
     return [df_final, UtilOutput, MCHSOutput];
 
     function ExcelDateToJSDate(serial) {
