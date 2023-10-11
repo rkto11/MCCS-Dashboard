@@ -636,7 +636,7 @@ td .status {
 }
 
 @media print {
-    .noprint, .noprint *, .dt-buttons {
+    .noprint, .noprint *, .dt-buttons, .dataTables_filter {
         display: none !important;
     }
     .main-content {
