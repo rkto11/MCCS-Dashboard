@@ -1040,7 +1040,8 @@ function goRPMProcess(Fac, Util, ICI) {
                 "other_unit_measure": other_um,
                 "sus": Math.round(parseFloat(Util[i][susTag] ?? 0)),
                 "RM_corrected": Math.round(rm),
-                "FSRM": FSRM
+                "FSRM": FSRM,
+                "prv": Math.round(rm/inflation/0.025)
             });
         }
         if(UAUIC.includes("MCHS") && nafcat.includes("L")) {
