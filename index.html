@@ -58,11 +58,16 @@
                 </li>
 
                 <li class="tabsButton" data-for-tab="5">
+                    <a onclick="toTop()"><span class="las la-exclamation-triangle"></span>
+                        <span>Q-Rating</span></a>
+                </li>
+
+                <li class="tabsButton" data-for-tab="6">
                     <a onclick="toTop()"><span class="las la-tree"></span>
                         <span>Treemap</span></a>
                 </li>
 
-                <li class="tabsButton" data-for-tab="6">
+                <li class="tabsButton" data-for-tab="7">
                     <a onclick="toTop()"><span class="las la-upload"></span>
                         <span>Upload</span></a>
                 </li>
@@ -371,7 +376,12 @@
                 <div>
                     <h3>Q-Rating</h3>
                     <div id="pq1"></div>
+                    <hr>
                     <table class="table display dt-responsive" id="tabCatQ"></table>
+                    <hr>
+                    <table class="table display dt-responsive" id="tabRegQ"></table>
+                    <hr>
+                    <table class="table display dt-responsive" id="tabInsQ"></table>
                     <hr>
                 </div>
             </div>
@@ -406,7 +416,11 @@
                 <div id="UtilProfContainer"></div>
             </div>
 
-            <div class="content exp-content" data-tab="5">
+            <div class="content q-content" data-tab="5">
+                <div id="qroverall"></div>
+            </div>
+
+            <div class="content exp-content" data-tab="6">
                 <h2>MCCS Treemap</h2>
 
                 <canvas id="tree" style="width: 100%;"></canvas>
@@ -418,18 +432,20 @@
                 <button onclick="toggler('op_activity')">Op Activity</button>
                 <button onclick="toggler('fac_num')">Facility Number</button>
                 <button onclick="toggler('use_desc')">Use Description</button>
+                <button onclick="toggler('fci_q_rating')">FCI Q Rating</button>
                 <br>
                 <button onclick="toggleKey('FSRM')">FSRM</button>
                 <button onclick="toggleKey('sus')">Sustainment</button>
                 <button onclick="toggleKey('RM_corrected')">R&M</button>
                 <button onclick="toggleKey('prv')">PRV</button>
+                <button onclick="toggleKey('count')">Count</button>
                 <br>
                 <button onclick="resetTree()">Reset</button>
 
                 <p>Treemap is interactive. Click on tree leaf to "zoom in" to the next layer. The first row of buttons toggle the grouping of the leaves. Second row changes the dollar value of the groupings.</p>
             </div>
 
-            <div class="content upload-content" data-tab="6">
+            <div class="content upload-content" data-tab="7">
                 <h3>Development Still In Progress</h3>
                 <p>Load times still long due to unoptimized code. After pressing submit, please wait until progress bar on the bottom to turn green before proceeding.</p>
                 <br>
@@ -577,6 +593,7 @@
                         document.getElementById("PB").style.width = "100%";
                         clickThroughData = df_final[1];
                         initTree(df_final[1]);
+                        lowQRating(df_final[0], df_final[3]);
                     }
                     else {
                         document.getElementById("PB").style.backgroundColor = "red";
@@ -673,6 +690,12 @@
 
             clickThroughLabel += " / " + path;
 
+            var labelformat = (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')];
+
+            if (treeKey == "count") {
+                labelformat = (ctx) => [ctx.raw._data.label, (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')];
+            }
+
             var treedatasets = [{
                 label: clickThroughLabel,
                 tree: outputData,
@@ -685,7 +708,7 @@
                 labels: {
                     align: 'left',
                     display: true,
-                    formatter: (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')],
+                    formatter: labelformat,
                     color: ['white', 'whiteSmoke'],
                     font: [{size: 14, weight: 'bold'}, {size: 12}],
                     position: 'top'
@@ -715,6 +738,14 @@
 
     function toggleKey(key) {
         treeKey = key;
+
+        var labelformat = (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')];
+
+        if (treeKey == "count") {
+            labelformat = (ctx) => [ctx.raw._data.label, (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')];
+        }
+
+
         var treedatasets = [{
             label: clickThroughLabel,
             tree: clickThroughData,
@@ -727,7 +758,7 @@
             labels: {
                 align: 'left',
                 display: true,
-                formatter: (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')],
+                formatter: labelformat,
                 color: ['white', 'whiteSmoke'],
                 font: [{size: 14, weight: 'bold'}, {size: 12}],
                 position: 'top'

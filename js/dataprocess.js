@@ -983,7 +983,7 @@ function goRPMProcess(Fac, Util, ICI) {
         }
 
         //Match to Facilities and pull Region/Installation/FCI?/PRV
-        var Region, Installation, FCI, PRV, FacArea, FacAreaUM, FacNum, AssetName;
+        var Region, Installation, FCI, PRV, FacArea, FacAreaUM, FacNum, AssetName, FCIQ;
         for (j=0; j<FacOutput.length; j++) {
             if(Util[i]["iNFADS Facility ID"] == FacOutput[j].fac_id) {
                 Region = FacOutput[j].region;
@@ -991,6 +991,7 @@ function goRPMProcess(Fac, Util, ICI) {
                 FacNum = FacOutput[j].fac_num;
                 AssetName = FacOutput[j].asset_name;
                 FCI = FacOutput[j].fci;
+                FCIQ = FacOutput[j].fci_q_rating;
                 PRV = parseFloat(FacOutput[j].prv);
                 FacArea = parseFloat(FacOutput[j].fac_area_measure);
                 FacAreaUM = FacOutput[j].fac_area_unit_measure;
@@ -1034,6 +1035,7 @@ function goRPMProcess(Fac, Util, ICI) {
                 "facility_desc": Util[i]["iNFADS DoD FAC Code"].slice(5),
                 "naf_cat": nafcat,
                 "fci": FCI,
+                "fci_q_rating": FCIQ,
                 "total_measure": parseFloat(Util[i]["iNFADS Adq Area Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Sub Area Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Iadq Area Measure"] ?? 0),
                 "alt_total_measure": parseFloat(Util[i]["iNFADS Adq Alternate Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Sub Alternate Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Iadq Alternate Measure"] ?? 0),
                 "other_total_measure": parseFloat(Util[i]["iNFADS Adq Other Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Sub Other Measure"] ?? 0) + parseFloat(Util[i]["iNFADS Iadq Other Measure"] ?? 0),
@@ -1041,7 +1043,8 @@ function goRPMProcess(Fac, Util, ICI) {
                 "sus": Math.round(parseFloat(Util[i][susTag] ?? 0)),
                 "RM_corrected": Math.round(rm),
                 "FSRM": FSRM,
-                "prv": Math.round(rm/inflation/0.025)
+                "prv": Math.round(rm/inflation/0.025),
+                "count": 1
             });
         }
         if(UAUIC.includes("MCHS") && nafcat.includes("L")) {
@@ -1067,6 +1070,54 @@ function goRPMProcess(Fac, Util, ICI) {
         }
     }
     //ICIs
+    for(i=0; i<ICI.length; i++) {
+        var ICIScore, ICIQ;
+        if (ICI[i]["Interior Condition Index for the facility"] === "INCOMPLETE" || ICI[i]["Interior Condition Index for the facility"] === "NA" || ICI[i]["Interior Condition Index for the facility"] === null) {
+            ICIScore = 0;
+            ICIQ = "Invalid"
+        }
+        else {
+            ICIScore = parseInt(ICI[i]["Interior Condition Index for the facility"]);
+            if(ICIScore>=90) {
+                ICIQ = "Q1";
+            }
+            else if(ICIScore>=80) {
+                ICIQ = "Q2";
+            }
+            else if(ICIScore>=60) {
+                ICIQ = "Q3";
+            }
+            else {
+                ICIQ = "Q4";
+            }
+        }
+
+        var Region, Installation, PRV, FacArea, FacAreaUM, FacNum, AssetName, FCIQ;
+        for (j=0; j<FacOutput.length; j++) {
+            if(ICI[i]["iNFADS Facility ID"] == FacOutput[j].fac_id) {
+                Region = FacOutput[j].region;
+                Installation = FacOutput[j].installation;
+                FacNum = FacOutput[j].fac_num;
+                AssetName = FacOutput[j].asset_name;
+                FCIQ = parseInt(FacOutput[j].fci_q_rating);
+                PRV = parseFloat(FacOutput[j].prv);
+                FacArea = parseFloat(FacOutput[j].fac_area_measure);
+                FacAreaUM = FacOutput[j].fac_area_unit_measure;
+            }
+        }
+        ICIOutput.push({
+            "region": Region,
+            "installation": Installation,
+            "fac_num": FacNum,
+            "asset_name": AssetName,
+            "ICI_score": ICIScore,
+            "ICI_Q_Rating": ICIQ
+        });
+    }
+    console.log(ICIOutput);
+
+
+
     //Array joins
 
     var df_final = [];
@@ -1124,7 +1175,7 @@ function goRPMProcess(Fac, Util, ICI) {
     let divout = document.getElementById("MCCSFacUtilNum");
     const totalsHTML = "<h3>Number of Facilities: " + df_final.length + "</h3>" +"<h3>Number of Utilizations: " + UtilOutput.length + "</h3>";
     divout.innerHTML = totalsHTML;
-    return [df_final, UtilOutput, MCHSOutput];
+    return [df_final, UtilOutput, MCHSOutput, ICIOutput];
 
     function ExcelDateToJSDate(serial) {
         var utc_days  = Math.floor(serial - 25569);
@@ -1215,4 +1266,87 @@ function processUtilProf (data) {
         });
       });
   });
+}
+
+function lowQRating (data, ICIdata) {
+    var out = [];
+    for (i=0; i<data.length; i++) {
+        if(data[i].fci < 80) {
+            out.push(data[i]);
+        }
+    }
+
+    var cat = {};
+    var naf_cat_totals = out.reduce(function(r,o) {
+        var key = o.naf_cat;
+        if(!(key in cat)) {
+            cat[key] = 1;
+        }
+        else {
+            cat[key]++;
+        }
+        return cat;
+    }, []);
+
+    var totalQ3Q4 = naf_cat_totals.A + naf_cat_totals.B + naf_cat_totals.C;
+    var overallHTML = "<h3>Total FCI Q3 and Q4 by Category</h3><p>A: " + naf_cat_totals.A + "</p><p>B: " + naf_cat_totals.B + "</p><p>C: " + naf_cat_totals.C + "</p><p>Total Q3 and Q4: " + totalQ3Q4 + "</p><p>Total Facilities: " + data.length + "</p>";
+
+    let outdiv = document.getElementById("qroverall");
+
+    var helper = {};
+    var result = data.reduce(function(r, o) {
+        var key = o.naf_cat + '-' + o.fci_q_rating;
+        
+        if(!helper[key]) {
+            helper[key] = Object.assign({}, {"naf_cat": o.naf_cat, "Q_Rating": o.fci_q_rating, "total": 1}); // create a copy of o
+            r.push(helper[key]);
+        } else {
+            helper[key].total++;
+        }
+
+        return r;
+    }, []);
+
+    result.sort(function(a, b) {
+        var textA = a.naf_cat + a.Q_Rating;
+        var textB = b.naf_cat + b.Q_Rating;
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
+
+    
+
+    overallHTML += "<h3>FCI Categories by Q-Rating</h3>"
+
+    result.forEach(e => {
+        overallHTML += "<p>" + e.naf_cat + " / " + e.Q_Rating + ": " + e.total + "</p>";
+    })
+
+    var ICIQ1 = 0;
+    var ICIQ2 = 0;
+    var ICIQ3 = 0;
+    var ICIQ4 = 0;
+    var ICIQInvalid = 0;
+
+    for(i=0; i<ICIdata.length; i++) {
+        if(ICIdata[i].ICI_Q_Rating === "Q1") {
+            ICIQ1++;
+        }
+        else if(ICIdata[i].ICI_Q_Rating === "Q2") {
+            ICIQ2++;
+        }
+        else if(ICIdata[i].ICI_Q_Rating === "Q3") {
+            ICIQ3++;
+        }
+        else if(ICIdata[i].ICI_Q_Rating === "Q4") {
+            ICIQ4++;
+        }
+        else {
+            ICIQInvalid++;
+        }
+    }
+
+    overallHTML += "<h3>ICI Q-Ratings</h3><p>Q1: " + ICIQ1 +"</p><p>Q2: " + ICIQ2 + "</p><p>Q3: " + ICIQ3 + "</p><p>Q4: " + ICIQ4 + "</p><p>Incomplete/Invalid: " + ICIQInvalid + "</p><p>Total ICIs in GoRPM: " + ICIdata.length + "</p>";
+
+    outdiv.innerHTML  = overallHTML;
+
 }
