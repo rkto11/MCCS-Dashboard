@@ -1010,7 +1010,7 @@ function goRPMProcess(Fac, Util, ICI) {
             rm = PRV*.025*inflation;
         }
 
-        var FSRM = Math.round(parseFloat(Util[i][susTag] ?? 0) + rm)
+        var FSRM = Math.round(parseFloat(Util[i][susTag] ?? 0) + Math.round(rm))
 
         //Checks following coloumns to ensure that these are MCCS utilizations, GoRPM does not accurately narrow down to MCCS acitivities
         var UAUIC = String(Util[i]["iNFADS User Activity UIC"]);
@@ -1069,54 +1069,6 @@ function goRPMProcess(Fac, Util, ICI) {
             });
         }
     }
-    //ICIs
-    for(i=0; i<ICI.length; i++) {
-        var ICIScore, ICIQ;
-        if (ICI[i]["Interior Condition Index for the facility"] === "INCOMPLETE" || ICI[i]["Interior Condition Index for the facility"] === "NA" || ICI[i]["Interior Condition Index for the facility"] === null) {
-            ICIScore = 0;
-            ICIQ = "Invalid"
-        }
-        else {
-            ICIScore = parseInt(ICI[i]["Interior Condition Index for the facility"]);
-            if(ICIScore>=90) {
-                ICIQ = "Q1";
-            }
-            else if(ICIScore>=80) {
-                ICIQ = "Q2";
-            }
-            else if(ICIScore>=60) {
-                ICIQ = "Q3";
-            }
-            else {
-                ICIQ = "Q4";
-            }
-        }
-
-        var Region, Installation, PRV, FacArea, FacAreaUM, FacNum, AssetName, FCIQ;
-        for (j=0; j<FacOutput.length; j++) {
-            if(ICI[i]["iNFADS Facility ID"] == FacOutput[j].fac_id) {
-                Region = FacOutput[j].region;
-                Installation = FacOutput[j].installation;
-                FacNum = FacOutput[j].fac_num;
-                AssetName = FacOutput[j].asset_name;
-                FCIQ = parseInt(FacOutput[j].fci_q_rating);
-                PRV = parseFloat(FacOutput[j].prv);
-                FacArea = parseFloat(FacOutput[j].fac_area_measure);
-                FacAreaUM = FacOutput[j].fac_area_unit_measure;
-            }
-        }
-        ICIOutput.push({
-            "region": Region,
-            "installation": Installation,
-            "fac_num": FacNum,
-            "asset_name": AssetName,
-            "ICI_score": ICIScore,
-            "ICI_Q_Rating": ICIQ
-        });
-    }
-    console.log(ICIOutput);
-
-
 
     //Array joins
 
@@ -1170,8 +1122,60 @@ function goRPMProcess(Fac, Util, ICI) {
           "Utilizations": facility_utilizations});
         }
     }
-    console.log(df_final.length);
-    console.log(UtilOutput.length);
+
+    //ICIs
+    for(i=0; i<ICI.length; i++) {
+        var ICIScore, ICIQ;
+        if (ICI[i]["Interior Condition Index for the facility"] === "INCOMPLETE" || ICI[i]["Interior Condition Index for the facility"] === "NA" || ICI[i]["Interior Condition Index for the facility"] === "#DIV/0!") {
+            ICIScore = 0;
+            ICIQ = "Invalid"
+        }
+        else {
+            ICIScore = parseInt(ICI[i]["Interior Condition Index for the facility"]);
+            if(ICIScore>=90) {
+                ICIQ = "Q1";
+            }
+            else if(ICIScore>=80) {
+                ICIQ = "Q2";
+            }
+            else if(ICIScore>=60) {
+                ICIQ = "Q3";
+            }
+            else if(ICIScore<0) {
+                ICIQ = "Q4";
+            }
+            else {
+                ICIQ = "Invalid"
+            }
+        }
+
+        var Region, Installation, PRV, FacArea, FacAreaUM, FacNum, AssetName, FCIQ, naf_cat, visit_date;
+        for (j=0; j<df_final.length; j++) {
+            if(ICI[i]["iNFADS Facility ID"] == df_final[j].fac_id) {
+                Region = df_final[j].region;
+                Installation = df_final[j].installation;
+                FacNum = df_final[j].fac_num;
+                AssetName = df_final[j].asset_name;
+                FCIQ = parseInt(df_final[j].fci_q_rating);
+                PRV = parseFloat(df_final[j].prv);
+                FacArea = parseFloat(df_final[j].fac_area_measure);
+                FacAreaUM = df_final[j].fac_area_unit_measure;
+                naf_cat = df_final[j].naf_cat;
+                visit_date = ExcelDateToJSDate(ICI[i]["Visit Date"]).getFullYear();
+            }
+        }
+        ICIOutput.push({
+            "region": Region,
+            "installation": Installation,
+            "fac_num": FacNum,
+            "asset_name": AssetName,
+            "ICI_score": ICIScore,
+            "ICI_Q_Rating": ICIQ,
+            "naf_cat": naf_cat,
+            "visit_date": visit_date
+        });
+    }
+
     let divout = document.getElementById("MCCSFacUtilNum");
     const totalsHTML = "<h3>Number of Facilities: " + df_final.length + "</h3>" +"<h3>Number of Utilizations: " + UtilOutput.length + "</h3>";
     divout.innerHTML = totalsHTML;
@@ -1268,16 +1272,19 @@ function processUtilProf (data) {
   });
 }
 
-function lowQRating (data, ICIdata) {
-    var out = [];
-    for (i=0; i<data.length; i++) {
-        if(data[i].fci < 80) {
-            out.push(data[i]);
-        }
-    }
 
+
+
+//============================================================================================//
+function lowQRating (data) {
+    var fac = data[0];
+    var Utildata = data[1];
+    var ICIdata  = data[3];
+
+
+    //Facilities FCI
     var cat = {};
-    var naf_cat_totals = out.reduce(function(r,o) {
+    var naf_cat_totals = fac.reduce(function(r,o) {
         var key = o.naf_cat;
         if(!(key in cat)) {
             cat[key] = 1;
@@ -1289,12 +1296,12 @@ function lowQRating (data, ICIdata) {
     }, []);
 
     var totalQ3Q4 = naf_cat_totals.A + naf_cat_totals.B + naf_cat_totals.C;
-    var overallHTML = "<h3>Total FCI Q3 and Q4 by Category</h3><p>A: " + naf_cat_totals.A + "</p><p>B: " + naf_cat_totals.B + "</p><p>C: " + naf_cat_totals.C + "</p><p>Total Q3 and Q4: " + totalQ3Q4 + "</p><p>Total Facilities: " + data.length + "</p>";
+    var overallHTML = "<h3>Total Facilities by NAF Category</h3><p>A: " + naf_cat_totals.A + "</p><p>B: " + naf_cat_totals.B + "</p><p>C: " + naf_cat_totals.C + "</p><p>Total Facilities: " + fac.length + "</p>";
 
     let outdiv = document.getElementById("qroverall");
 
     var helper = {};
-    var result = data.reduce(function(r, o) {
+    var result = fac.reduce(function(r, o) {
         var key = o.naf_cat + '-' + o.fci_q_rating;
         
         if(!helper[key]) {
@@ -1319,8 +1326,32 @@ function lowQRating (data, ICIdata) {
 
     result.forEach(e => {
         overallHTML += "<p>" + e.naf_cat + " / " + e.Q_Rating + ": " + e.total + "</p>";
-    })
+    });
 
+
+    //Utilization FCI
+    var helper2 = {};
+    var Utilresult = Utildata.reduce(function(r, o) {
+        var key = o.naf_cat + '-' + o.fci_q_rating;
+        
+        if(!helper2[key]) {
+            helper2[key] = Object.assign({}, {"naf_cat": o.naf_cat, "Q_Rating": o.fci_q_rating, "total": 1}); // create a copy of o
+            r.push(helper2[key]);
+        } else {
+            helper2[key].total++;
+        }
+
+        return r;
+    }, []);
+
+    Utilresult.sort(function(a, b) {
+        var textA = a.naf_cat + a.Q_Rating;
+        var textB = b.naf_cat + b.Q_Rating;
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
+
+
+    //ICI Processing
     var ICIQ1 = 0;
     var ICIQ2 = 0;
     var ICIQ3 = 0;
@@ -1348,5 +1379,29 @@ function lowQRating (data, ICIdata) {
     overallHTML += "<h3>ICI Q-Ratings</h3><p>Q1: " + ICIQ1 +"</p><p>Q2: " + ICIQ2 + "</p><p>Q3: " + ICIQ3 + "</p><p>Q4: " + ICIQ4 + "</p><p>Incomplete/Invalid: " + ICIQInvalid + "</p><p>Total ICIs in GoRPM: " + ICIdata.length + "</p>";
 
     outdiv.innerHTML  = overallHTML;
+
+
+
+    var helper3 = {};
+    var ICIPlanning = ICIdata.reduce(function(r, o) {
+        var key =+ o.naf_cat + '-' + o.ICI_Q_Rating;
+        
+        if(!helper3[key]) {
+            helper3[key] = Object.assign({}, {"naf_cat": o.naf_cat, "Q_Rating": o.ICI_Q_Rating, "total": 1}); // create a copy of o
+            r.push(helper3[key]);
+        } else {
+            helper3[key].total++;
+        }
+        return r;
+    }, []);
+
+    ICIPlanning.sort(function(a, b) {
+        var textA = a.naf_cat + a.Q_Rating;
+        var textB = b.naf_cat + b.Q_Rating;
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
+
+    console.log(ICIPlanning);
+
 
 }

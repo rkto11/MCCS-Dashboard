@@ -443,6 +443,11 @@
                 <button onclick="resetTree()">Reset</button>
 
                 <p>Treemap is interactive. Click on tree leaf to "zoom in" to the next layer. The first row of buttons toggle the grouping of the leaves. Second row changes the dollar value of the groupings.</p>
+                <div id="treemapTable">
+                    <div id="tabContainer">
+                        <table id="tabTreemap"></table>
+                    </div>
+                </div>
             </div>
 
             <div class="content upload-content" data-tab="7">
@@ -593,7 +598,7 @@
                         document.getElementById("PB").style.width = "100%";
                         clickThroughData = df_final[1];
                         initTree(df_final[1]);
-                        lowQRating(df_final[0], df_final[3]);
+                        lowQRating(df_final);
                     }
                     else {
                         document.getElementById("PB").style.backgroundColor = "red";
@@ -681,12 +686,17 @@
                     outputData.push(clickThroughData[i]);
                 }
             }
-            console.log(outputData.length);
             
+            if (GROUPS.length > 1 ) {
+                GROUPS = [GROUPS[1]];
+            }
+
+            else {
             if (highestGroup === 'region') {GROUPS = ['installation']; }
             if (highestGroup === 'installation') {GROUPS = ['naf_cat']; }
             if (highestGroup === 'naf_cat') {GROUPS = ['op_activity']; }
-            if (highestGroup === 'op_activity') {GROUPS = ['fac_num', 'use_desc']; }
+            if (highestGroup === 'op_activity') {GROUPS = ['use_desc']; }
+            }
 
             clickThroughLabel += " / " + path;
 
@@ -719,9 +729,11 @@
 
         myChart.data.datasets = treedatasets;
         myChart.update();
+        treeTableData(myChart.data.datasets[0].data, highestGroup);
     }
 
         treectx.onclick = clickHandler;
+        treeTableData(myChart.data.datasets[0].data, "region");
     }
 
     function toggler(group) {
@@ -734,6 +746,7 @@
         }
         myChart.config.data.datasets.groups = GROUPS;
         myChart.update();
+        treeTableData(myChart.data.datasets[0].data, GROUPS[0]);
     }
 
     function toggleKey(key) {
@@ -774,6 +787,109 @@
         clickThroughLabel = "MCCS";
         treeKey = "FSRM";
         initTree(df_final[1]);
+    }
+
+    function treeTableData(data, group) {
+        //process data
+        console.log(data);
+        var output = [];
+        for (i=0; i<data.length; i++) {
+            var sus = 0;
+            var rm = 0;
+            var fsrm = 0;
+            var q1 = 0;
+            var q2 = 0;
+            var q3 = 0;
+            var q4 = 0;
+            data[i]._data.children.forEach(e => {
+                sus += e.sus;
+                rm += e.RM_corrected;
+                fsrm += e.FSRM;
+                if(e.fci_q_rating === "Q1") {q1++};
+                if(e.fci_q_rating === "Q2") {q2++};
+                if(e.fci_q_rating === "Q3") {q3++};
+                if(e.fci_q_rating === "Q4") {q4++};
+            });
+            output.push({group: data[i].g, "Sustainment": sus, "RM": rm, "FSRM": fsrm, "Utilizations": data[i]._data.children.length, "Q1": q1, "Q2": q2, "Q3": q3, "Q4": q4});
+        }
+        console.log(output);
+
+
+        //delete div then recreate
+        document.getElementById("tabContainer").remove();   
+        //document.getElementById("tabTreemap_wrapper").remove();
+        var newDiv = document.createElement('div');
+        newDiv.id = "tabContainer";
+        var newTable = document.createElement("table");
+        newTable.id = "tabTreemap";
+        newTable.className = "";
+        newDiv.appendChild(newTable);
+
+        document.getElementById("treemapTable").appendChild(newDiv);
+        
+
+        //create table
+        var tablehtml = createTable(output);
+
+        var numFormat = $.fn.dataTable.render.number('\,', '.', 0, '$' ).display;
+        var numFormat2 = $.fn.dataTable.render.number('\,', '.', 0).display;
+
+        $('#tabTreemap').html(tablehtml);
+        $(document).ready(function () {
+        $('#tabTreemap').dataTable({
+            data: output,
+            dom: "Bfrtip",
+            buttons: ['copy', 'csv', 'excel'],
+            paging: true,
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            order: [[3, 'desc']],
+            columns: [
+                {data: 'group'},
+                {data: 'Sustainment',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
+                {data: 'RM',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
+                {data: 'FSRM',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
+                {data: 'Utilizations',render: $.fn.dataTable.render.number(',', '.', 0)},
+                {data: 'Q1',render: $.fn.dataTable.render.number(',', '.', 0)},
+                {data: 'Q2',render: $.fn.dataTable.render.number(',', '.', 0)},
+                {data: 'Q3',render: $.fn.dataTable.render.number(',', '.', 0)},
+                {data: 'Q4',render: $.fn.dataTable.render.number(',', '.', 0)}
+                
+            ],
+            
+        
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api();
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+                var sus = api.column(1).data().reduce(function(a,b){return intVal(a) +intVal(b);});
+                var RM = api.column(2).data().reduce(function(a,b){return intVal(a) +intVal(b);});
+                var FSRM = api.column(3).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                var util = api.column(4).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                var q1 = api.column(5).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                var q2 = api.column(6).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                var q3 = api.column(7).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                var q4 = api.column(8).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
+                
+
+                $(api.column(0).footer()).html('Total FSRM');
+                $(api.column(1).footer()).html(numFormat(sus));
+                $(api.column(2).footer()).html(numFormat(RM));
+                $(api.column(3).footer()).html(numFormat(FSRM));
+                $(api.column(4).footer()).html(numFormat2(util));
+                $(api.column(5).footer()).html(numFormat2(q1));
+                $(api.column(6).footer()).html(numFormat2(q2));
+                $(api.column(7).footer()).html(numFormat2(q3));
+                $(api.column(8).footer()).html(numFormat2(q4));
+            }
+        });
+    });
     }
 
     //create functions to be called either here or in separate js file
