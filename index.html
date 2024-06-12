@@ -27,7 +27,10 @@
 	<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js"></script>
     
     <script src="./js/dataprocess.js"></script>
-    <script src="./js/createtables.js"></script>
+    <script src="./js/dataprocess-new.js"></script>
+    <script src="./js/createtable-new.js"></script>
+    <script src="./js/stackbar.js"></script>
+    
 </head>
 
 <body>
@@ -90,13 +93,6 @@
                 <input type="search" placeholder="Search Here" />
             </div>
     
-            <!--<div class="user-wrapper">
-                <img src="./img/icon.png" width="30px" height="30px" alt="">
-                <div>
-                    <h4>John Doe</h4>
-                    <small>Standard User</small>
-                </div>
-            </div>-->
         </header>
 
         <main class="tab-content fade">
@@ -145,271 +141,12 @@
 				<h3 id="funding-for-success">Funding for Success</h3>
 				<p>We will be fiscally responsible and invest in readiness. We validate requirements and needs through a data driven approach. We plan, program, budget and execute resources to sustain valued programs and services and a well maintained infrastructure. MCCS BOD strategy and funding decisions are informed by strategic plans and a prioritization and risk management framework within the overarching MCCS PPBEA reform. We make hard decisions to prioritize resources to address the most important and relevant requirements. Likewise, we leverage the MCCS BOD and senior leaders to identify areas of divestiture.</p>
 				<p>Reference: MCCS Integrated Strategic Guidance <a href="https://mccsorg-my.sharepoint.com/:b:/g/personal/jason_barnes_usmc-mccs_org/ESIbRg1PR9tMu8YLVtzJKkABncamySFqIZnTYB7Zv3bxQQ?e=ptuZJb">link</a></p>
-                <!-- <div class="cards">
-                    <div class="cards-single">
-                            <div>
-                                <h1>$6k</h1>
-                                <span>Income</span>
-                            </div>
-                            <div>
-                                <span class="lab la-google-wallet"></span>
-                            </div>
-                    </div>
-                    <div class="cards-single">
-                        <div>
-                            <h1>$6k</h1>
-                            <span>Income</span>
-                        </div>
-                        <div>
-                            <span class="lab la-google-wallet"></span>
-                        </div>
-                    </div>
-                    <div class="cards-single">
-                        <div>
-                            <h1>$6k</h1>
-                            <span>Income</span>
-                        </div>
-                        <div>
-                            <span class="lab la-google-wallet"></span>
-                        </div>
-                    </div>
-                    <div class="cards-single">
-                        <div>
-                            <h1>$6k</h1>
-                            <span>Income</span>
-                        </div>
-                        <div>
-                            <span class="lab la-google-wallet"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="recent-activity">
-                    <div class="projects">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Recent Projects</h3>
-                                <button>See all <span class="las la-arrow-right"></span></button>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <td>Project Title</td>
-                                                <td>Department</td>
-                                                <td>Status</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>UI/UX Design</td>
-                                                <td>UI Team</td>
-                                                <td><span class="status green"></span>Complete</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Web Development</td>
-                                                <td>Frontend Development Team</td>
-                                                <td><span class="status yellow"></span>In Progress</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Server Implimentation</td>
-                                                <td>Backend Development Team</td>
-                                                <td><span class="status blue"></span>Review</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Advertisement</td>
-                                                <td>Marketing Team</td>
-                                                <td><span class="status red"></span>Pending</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="comments">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Recent Comments</h3>
-                                <button>See all <span class="las la-arrow-right"></span></button>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="comment">
-                                    <div class="info">
-                                        <img src="./img/icon.png" width="40px" height="40px" alt="">
-                                        <div>
-                                            <h4>John Doe</h4>
-                                            <small>Standard User</small>
-                                        </div>
-                                    </div>
-                                    <div class="contact">
-                                        <span class="las la-user-circle"></span>
-                                        <span class="las la-comment"></span>
-                                        <span class="las la-phone"></span>
-                                    </div>
-                                </div>
-
-                                <div class="comment">
-                                    <div class="info">
-                                        <img src="./img/icon.png" width="40px" height="40px" alt="">
-                                        <div>
-                                            <h4>John Doe</h4>
-                                            <small>Standard User</small>
-                                        </div>
-                                    </div>
-                                    <div class="contact">
-                                        <span class="las la-user-circle"></span>
-                                        <span class="las la-comment"></span>
-                                        <span class="las la-phone"></span>
-                                    </div>
-                                </div>
-
-                                <div class="comment">
-                                    <div class="info">
-                                        <img src="./img/icon.png" width="40px" height="40px" alt="">
-                                        <div>
-                                            <h4>John Doe</h4>
-                                            <small>Standard User</small>
-                                        </div>
-                                    </div>
-                                    <div class="contact">
-                                        <span class="las la-user-circle"></span>
-                                        <span class="las la-comment"></span>
-                                        <span class="las la-phone"></span>
-                                    </div>
-                                </div>
-
-                                <div class="comment">
-                                    <div class="info">
-                                        <img src="./img/icon.png" width="40px" height="40px" alt="">
-                                        <div>
-                                            <h4>John Doe</h4>
-                                            <small>Standard User</small>
-                                        </div>
-                                    </div>
-                                    <div class="contact">
-                                        <span class="las la-user-circle"></span>
-                                        <span class="las la-comment"></span>
-                                        <span class="las la-phone"></span>
-                                    </div>
-                                </div>
-
-                                <div class="comment">
-                                    <div class="info">
-                                        <img src="./img/icon.png" width="40px" height="40px" alt="">
-                                        <div>
-                                            <h4>John Doe</h4>
-                                            <small>Standard User</small>
-                                        </div>
-                                    </div>
-                                    <div class="contact">
-                                        <span class="las la-user-circle"></span>
-                                        <span class="las la-comment"></span>
-                                        <span class="las la-phone"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
             </div>
 
-            <div class="content report-content" data-tab="2">
-                <h1>MCCS Facilities Exploratory Analysis</h1>
-                <p>Note: The current report is based on utilization information unless otherwise noted.</p>
-                <p>Facility Sustainment, Restortation, and Modernization (FSRM) calculations are resource agnostic.</p>
-                <!--MCCS------------------------------------------------------------------------------->
-                <div id="MCCSFacUtilNum"></div>
-                <hr>
-                <div>
-                    <h3>Category</h3>
-                    <table class="table display dt-responsive" id="tabCat"></table>
-                    <canvas id="CategoryChart"></canvas>
-                    <hr>
-                </div>
-                
-                <div>
-                    <h3>Region</h3>
-                    <table class="table display dt-responsive" id="tabRegion"></table>
-                    <canvas id="RegionChart"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Region (Cat C Only)</h3>
-                    <table class="table display dt-responsive" id="tabRegionC"></table>
-                    <canvas id="RegionCChart"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Installation</h3>
-                    <table class="table display dt-responsive" id="tabInstallation"></table>
-                    <canvas id="InstallationChart"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Installation (Cat C Only)</h3>
-                    <table class="table display dt-responsive" id="tabInstallationC"></table>
-                    <canvas id="InstallationCChart"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Program</h3>
-                    <table class="table display dt-responsive" id="tabProgram"></table>
-                    <canvas id="ProgramChart"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Use Category</h3>
-                    <table class="table display dt-responsive" id="tabCCN"></table>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Q-Rating</h3>
-                    <div id="pq1"></div>
-                    <hr>
-                    <table class="table display dt-responsive" id="tabCatQ"></table>
-                    <hr>
-                    <table class="table display dt-responsive" id="tabRegQ"></table>
-                    <hr>
-                    <table class="table display dt-responsive" id="tabInsQ"></table>
-                    <hr>
-                </div>
+            <div class="content report-content" data-tab="2" id="mccs-report">
             </div>
 
-            <div class="content MCHS-content" data-tab="3">
-                <!--MCHS divs here-->
-                <h1>MCHS</h1>
-
-                <div>
-                    <h3>Category</h3>
-                    <table class="table display dt-responsive" id="tabCatH"></table>
-                    <canvas id="CategoryChartH"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Region</h3>
-                    <table class="table display dt-responsive" id="tabRegionH"></table>
-                    <canvas id="RegionChartH"></canvas>
-                    <hr>
-                </div>
-
-                <div>
-                    <h3>Installation</h3>
-                    <table class="table display dt-responsive" id="tabInstallationH"></table>
-                    <canvas id="InstallationChartH"></canvas>
-                    <hr>
-                </div>
+            <div class="content MCHS-content" data-tab="3" id="mchs-report">
             </div>
 
             <div class="content UvP-content" data-tab="4">
@@ -417,7 +154,17 @@
             </div>
 
             <div class="content q-content" data-tab="5">
+                <canvas id="stackbar" style="width: 100%;"></canvas>
+                <button id="stackreset">BCI Reset</button>
+                <button id="stackICIreset">ICI Reset</button>
+                <br>
+                <div id="barTableDiv">
+                    <div id="barTabContainer">
+                        <table id="tableBarData"></table>
+                    </div>
+                </div>
                 <div id="qroverall"></div>
+                
             </div>
 
             <div class="content exp-content" data-tab="6">
@@ -437,22 +184,27 @@
                 <button onclick="toggleKey('FSRM')">FSRM</button>
                 <button onclick="toggleKey('sus')">Sustainment</button>
                 <button onclick="toggleKey('RM_corrected')">R&M</button>
+                <button onclick="toggleKey('total_restoration')">Total Restoration</button>
                 <button onclick="toggleKey('prv')">PRV</button>
                 <button onclick="toggleKey('count')">Count</button>
+                <br>
+                <button onclick="toggleDataSource('Facilities')">Facilities</button>
+                <button onclick="toggleDataSource('Utilizations')">Utilizations</button>
                 <br>
                 <button onclick="resetTree()">Reset</button>
 
                 <p>Treemap is interactive. Click on tree leaf to "zoom in" to the next layer. The first row of buttons toggle the grouping of the leaves. Second row changes the dollar value of the groupings.</p>
                 <div id="treemapTable">
                     <div id="tabContainer">
-                        <table id="tabTreemap"></table>
+                        <table id="tableTreemap"></table>
                     </div>
                 </div>
+
             </div>
 
             <div class="content upload-content" data-tab="7">
-                <h3>Development Still In Progress</h3>
-                <p>Load times still long due to unoptimized code. After pressing submit, please wait until progress bar on the bottom to turn green before proceeding.</p>
+                <h3>Data Process</h3>
+                <p>After pressing submit, please wait until progress bar on the bottom to turn green before proceeding.</p>
                 <br>
                 <label for="uploadfile">Choose GoRPM Export</label>
                 <input type="file" id="uploadfile" name="uploadfile" accept=".xlsx, .xls">
@@ -537,7 +289,7 @@
         document.documentElement.scrollTop = 0;
     }
 
-    //experimental
+    //init treemap
     var treectx = document.getElementById("tree");
     var defaultconfig = {
         type: 'treemap',
@@ -549,13 +301,14 @@
     };
     const myChart = new Chart(treectx, defaultconfig);
     
+    //init stackbar
+    var stackctx = document.getElementById("stackbar");
+    const stackChart = new Chart(stackctx, {type: 'bar', labels:  "label", data: {datasets :[{label: "label", data: [1,2,3]}]}});
+
     //pull from uploaded data
     var selectedFile;
     var df_final;
-    var GROUPS = ["region"]; 
-    var clickThroughData;
-    var clickThroughLabel = "MCCS";
-    var treeKey = "FSRM";
+    
 
     document
         .getElementById("uploadfile")
@@ -576,40 +329,43 @@
                     var workbook = XLSX.read(data, {
                         type: "binary"
                     });
-                    // workbook.SheetNames.forEach(sheet => {
-                    //     let rowObject = XLSX.utils.sheet_to_row_object_array(
-                    //         workbook.Sheets[sheet]
-                    //     );
-                    //     createCostTables(rowObject);
-                    //     console.log(rowObject);
-                    //call function here for update data in page
-                    // });
 
                     let FacSheet = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["Facility"]);
                     let UtilSheet = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["Utilization"]); 
                     let ICISheet = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["Interior Condition Index"]);
 
-                    if(goRPMHeaderCheck(Object.keys(FacSheet[0]), Object.keys(UtilSheet[0]), Object.keys(ICISheet[0]))) {
-                        df_final = goRPMProcess(FacSheet, UtilSheet, ICISheet);
-                        createCostTables(df_final);
-                        document.getElementById("PB").style.backgroundColor = "green";
-                        document.getElementById("PB").style.width = "66%";
-                        createQratingTables(df_final[0]);
-                        document.getElementById("PB").style.width = "100%";
-                        clickThroughData = df_final[1];
-                        initTree(df_final[1]);
-                        lowQRating(df_final);
-                    }
-                    else {
-                        document.getElementById("PB").style.backgroundColor = "red";
-                        confirm("Required header(s) mssing");
-                    }
+                    df_final = goRPMProcess(FacSheet, UtilSheet, ICISheet);
+
+                    CreateMCCSFSRMReport(df_final);
+                    lowQRating(df_final);
+                    document.getElementById("PB").style.backgroundColor = "green";
+                    document.getElementById("PB").style.width = "100%";
+                    
+                    //treemap
+                    clickThroughData = df_final[1];
+                    initTree(df_final[1]); 
+
+                    //stackbar
+                    var stackFCIdata = stackdataprocess(df_final, 1);
+                    stackInit(stackFCIdata, stackctx, stackChart);
+                    const stackbutton = document.getElementById("stackreset");
+                    stackbutton.addEventListener("click", function(){stackInit(stackFCIdata, stackctx, stackChart)});
+
+                    var stackICIdata = stackdataprocess(df_final, 3);
+                    const stackICIbutton = document.getElementById("stackICIreset");
+                    stackICIbutton.addEventListener("click", function(){stackInit(stackICIdata, stackctx, stackChart)});
+
                 };
                 fileReader.readAsBinaryString(selectedFile); 
             }
         });
 
     
+    //init treemap carryover variables
+    var GROUPS = ["region"]; 
+    var clickThroughData;
+    var clickThroughLabel = "MCCS";
+    var treeKey = "FSRM";
     
     function initTree(dataArray) {
         var treedatasets = [{
@@ -679,7 +435,7 @@
 
         function clickthrough(path) {
             const highestGroup = GROUPS[0];
-            console.log(highestGroup + ' ' + path);
+            //console.log(highestGroup + ' ' + path);
             var outputData = [];
             for(i=0; i<clickThroughData.length; i++) {
                 if(clickThroughData[i][highestGroup] === path) {
@@ -688,7 +444,7 @@
             }
             
             if (GROUPS.length > 1 ) {
-                GROUPS = [GROUPS[1]];
+                GROUPS.shift();
             }
 
             else {
@@ -781,6 +537,65 @@
         myChart.update();
     }
     
+    function toggleDataSource(datasetName) {
+        var inputdata;
+        if (datasetName ===  "Facilities") {
+            inputdata = df_final[0];
+            clickThroughLabel = "Facilities / MCCS";
+        }
+        else {
+            inputdata = df_final[1];
+            clickThroughLabel = "Utilizations / MCCS";
+        }
+        
+        var treedatasets = [{
+            label: clickThroughLabel,
+            tree: inputdata,
+            key: treeKey,
+            groups: GROUPS,
+            borderWidth: 0,
+            borderRadius: 6,
+            spacing:1,
+            backgroundColor: "rgba(3, 138, 255, 0.5)",
+            labels: {
+                align: 'left',
+                display: true,
+                formatter: (ctx) => [ctx.raw._data.label, '$' + (ctx.raw.v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')],
+                color: ['white', 'whiteSmoke'],
+                font: [{size: 14, weight: 'bold'}, {size: 12}],
+                position: 'top'
+            }
+        }];
+
+        var treeoptions =  {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'My treemap chart'
+                },
+                legend: {
+                    display: true
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label(item) {
+                            const dataItem = item.raw;
+                            const obj = dataItem._data;
+                            const label = obj.installation || obj.region || obj.op_activity || obj.fac_num || obj.use_desc;
+                            return label + ': $' + dataItem.v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        }
+                    }
+                } 
+            }
+        };
+        clickThroughData = inputdata;
+        myChart.data.datasets = treedatasets;
+        myChart.data.options = treeoptions;
+        myChart.update();
+        treeTableData(myChart.data.datasets[0].data, GROUPS[0]);
+    }
+
     function resetTree() {
         GROUPS = ["region"];
         clickThroughData = df_final[1];
@@ -791,37 +606,44 @@
 
     function treeTableData(data, group) {
         //process data
-        console.log(data);
+        //console.log(data[0]._data);
+        const grouping = GROUPS[0];
         var output = [];
         for (i=0; i<data.length; i++) {
             var sus = 0;
             var rm = 0;
             var fsrm = 0;
+            var prv = 0;
             var q1 = 0;
             var q2 = 0;
             var q3 = 0;
             var q4 = 0;
+            var count = 0;
             data[i]._data.children.forEach(e => {
                 sus += e.sus;
                 rm += e.RM_corrected;
                 fsrm += e.FSRM;
+                count += e.count;
+                prv += e.prv;
                 if(e.fci_q_rating === "Q1") {q1++};
                 if(e.fci_q_rating === "Q2") {q2++};
                 if(e.fci_q_rating === "Q3") {q3++};
                 if(e.fci_q_rating === "Q4") {q4++};
             });
-            output.push({group: data[i].g, "Sustainment": sus, "RM": rm, "FSRM": fsrm, "Utilizations": data[i]._data.children.length, "Q1": q1, "Q2": q2, "Q3": q3, "Q4": q4});
+            
+            const obj = {[grouping]: data[i].g};
+            if(data[i].l == 0) {
+            output.push({...obj, "Sustainment": sus, "RM": rm, "FSRM": fsrm, "PRV": prv, "Utilizations": count, "Q1": q1, "Q2": q2, "Q3": q3, "Q4": q4});
+            }
         }
-        console.log(output);
 
 
         //delete div then recreate
         document.getElementById("tabContainer").remove();   
-        //document.getElementById("tabTreemap_wrapper").remove();
         var newDiv = document.createElement('div');
         newDiv.id = "tabContainer";
         var newTable = document.createElement("table");
-        newTable.id = "tabTreemap";
+        newTable.id = "tableTreemap";
         newTable.className = "";
         newDiv.appendChild(newTable);
 
@@ -829,14 +651,13 @@
         
 
         //create table
-        var tablehtml = createTable(output);
+        var tablehtml = createTableHTML(output, 'Treemap');
 
-        var numFormat = $.fn.dataTable.render.number('\,', '.', 0, '$' ).display;
-        var numFormat2 = $.fn.dataTable.render.number('\,', '.', 0).display;
+        var numFormat = $.fn.dataTable.render.number('\,', '.', 0, '$' );
+        var numFormat2 = $.fn.dataTable.render.number('\,', '.', 0);
 
-        $('#tabTreemap').html(tablehtml);
         $(document).ready(function () {
-        $('#tabTreemap').dataTable({
+        $('#tableTreemap').dataTable({
             data: output,
             dom: "Bfrtip",
             buttons: ['copy', 'csv', 'excel'],
@@ -846,19 +667,19 @@
             "bInfo": false,
             order: [[3, 'desc']],
             columns: [
-                {data: 'group'},
-                {data: 'Sustainment',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
-                {data: 'RM',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
-                {data: 'FSRM',render: $.fn.dataTable.render.number(',', '.', 0, '$' )},
-                {data: 'Utilizations',render: $.fn.dataTable.render.number(',', '.', 0)},
-                {data: 'Q1',render: $.fn.dataTable.render.number(',', '.', 0)},
-                {data: 'Q2',render: $.fn.dataTable.render.number(',', '.', 0)},
-                {data: 'Q3',render: $.fn.dataTable.render.number(',', '.', 0)},
-                {data: 'Q4',render: $.fn.dataTable.render.number(',', '.', 0)}
+                {data: grouping},
+                {data: 'Sustainment',render: numFormat},
+                {data: 'RM',render: numFormat},
+                {data: 'FSRM',render: numFormat},
+                {data: 'PRV',render: numFormat},
+                {data: 'Utilizations',render: numFormat2},
+                {data: 'Q1',render: numFormat2},
+                {data: 'Q2',render: numFormat2},
+                {data: 'Q3',render: numFormat2},
+                {data: 'Q4',render: numFormat2}
                 
             ],
             
-        
             "footerCallback": function ( row, data, start, end, display ) {
                 var api = this.api();
 
@@ -868,29 +689,19 @@
                         typeof i === 'number' ?
                             i : 0;
                 };
-                var sus = api.column(1).data().reduce(function(a,b){return intVal(a) +intVal(b);});
-                var RM = api.column(2).data().reduce(function(a,b){return intVal(a) +intVal(b);});
-                var FSRM = api.column(3).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                var util = api.column(4).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                var q1 = api.column(5).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                var q2 = api.column(6).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                var q3 = api.column(7).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                var q4 = api.column(8).data().reduce( function (a, b) {return intVal(a) + intVal(b);});
-                
 
-                $(api.column(0).footer()).html('Total FSRM');
-                $(api.column(1).footer()).html(numFormat(sus));
-                $(api.column(2).footer()).html(numFormat(RM));
-                $(api.column(3).footer()).html(numFormat(FSRM));
-                $(api.column(4).footer()).html(numFormat2(util));
-                $(api.column(5).footer()).html(numFormat2(q1));
-                $(api.column(6).footer()).html(numFormat2(q2));
-                $(api.column(7).footer()).html(numFormat2(q3));
-                $(api.column(8).footer()).html(numFormat2(q4));
+                $(api.column(0).footer()).html('Total');
+                for(i=1; i<10; i++) {
+                    var e = api.column(i).data().reduce(function(a,b){return intVal(a) +intVal(b);});
+                    if(i < 5) {$(api.column(i).footer()).html(numFormat.display(e));}
+                    else {$(api.column(i).footer()).html(numFormat2.display(e));}
+                }
+                
             }
         });
     });
     }
+
 
     //create functions to be called either here or in separate js file
     //chart js update prob needs to be created here

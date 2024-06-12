@@ -6,17 +6,48 @@ const group = [
     ["CCN", "use_desc"]
 ];
 
+//MCHS requires only Cat, Region, Installation
+const MCHSgroup = group.slice(0,3);
+
 //initial html elements, called when submit button is pressed
-function reduceInit(data) {
-    initHTML();
-    group.forEach((e) => dataGroup(e,data));
+function CreateMCCSFSRMReport(data) {
+    initHTML('#mccs-report', '#mchs-report');
+    group.forEach((e) => dataGroup(e, data));
+    
+    //add filtering to Cat C, then run dataGroup, re-lable e[0] to e[0] + "C"
+    const CatCData = filterToCat(data, 0, 1, "C");
+
+    group.forEach((e) => {
+        var labelC = e[0] + "C";
+        dataGroup([labelC, e[1]], CatCData);
+    });
+
+    //remove Category filtered to Cat C. Would be a singlular data point
+     document.getElementById("CategoryC").remove();
+
+
+     //MCHS grouping, data process
+     
+     const MCHSData = filterToCat(data, 4, 2, "L");
+
+     MCHSgroup.forEach((e) => {
+        var labelC = e[0] + "H";
+        dataGroup([labelC, e[1]], MCHSData);
+    });
 }
 
 //html generator
-function initHTML() {
-    var html = "";
-    group.forEach((e) => html += "<div id='" + e[0] + "'>\r\n" + "<h3>" + e[0] + "</h3>\r\n <table id='table" + e[0] + "'></table>\r\n" + "<canvas id='chart" + e[0] + "'></canvas></div>\r\n");
-    $('#reduce-code').html(html);
+function initHTML(mccsID, mchsID) {
+    //MCCS Tab HTML
+    var mccshtml = "<h1>MCCS Facilities Exploratory Analysis</h1><hr>";
+    group.forEach((e) => mccshtml += "<div id='" + e[0] + "'>\r\n" + "<h3>" + e[0] + "</h3>\r\n <table id='table" + e[0] + "'></table>\r\n" + "<canvas id='chart" + e[0] + "'></canvas></div>\r\n"
+        + "<div id='" + e[0] + "C'>\r\n" + "<h3>" + e[0] + " (Category C)</h3>\r\n <table id='table" + e[0] + "C'></table>\r\n" + "<canvas id='chart" + e[0] + "C'></canvas></div><hr>\r\n");
+    $(mccsID).html(mccshtml);
+
+    //MCHS Tab HTML
+    var mchshtml = "<h1>MCHS</h1><hr>"
+    MCHSgroup.forEach((e) => mchshtml += "<div id='" + e[0] + "H'>\r\n" + "<h3>" + e[0] + "</h3>\r\n <table id='table" + e[0] + "H'></table>\r\n" + "<canvas id='chart" + e[0] + "H'></canvas></div><hr>\r\n");
+    $(mchsID).html(mchshtml);
 }
 
 //data grouping
@@ -65,7 +96,7 @@ function dataGroup(grouping, data) {
 
         const el = element[i];
         const obj = {[label]: el};
-        groupedData.push(...[{...obj, "Sustainment": S, "R&M": RM, "FSRM": FSRM, "Utilizations": UtilCount, "Facilities": FacCount, "Q1": Q1, "Q2": Q2, "Q3": Q3, "Q4": Q4}]);
+        groupedData.push(...[{...obj, "Sustainment": round2dec(S), "R&M": round2dec(RM), "FSRM": round2dec(FSRM), "Utilizations": UtilCount, "Facilities": FacCount, "Q1": Q1, "Q2": Q2, "Q3": Q3, "Q4": Q4}]);
     }
 
     createTableHTML(groupedData, label);
@@ -236,4 +267,26 @@ function initChart (data, id) {
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function filterToCat(data, facdatasetnum, utildatasetnum, cat) {
+    
+    const FacData = data[facdatasetnum];
+    const UtilData = data[utildatasetnum];
+    var OutputFac = [];
+    var OutputUtil = [];
+
+    FacData.forEach((e)  => {
+        if ((e.naf_cat).includes(cat)) {OutputFac.push(e);}
+    })
+
+    UtilData.forEach((e)  => {
+        if ((e.naf_cat).includes(cat)) {OutputUtil.push(e);}
+    })
+
+    return [OutputFac, OutputUtil];
+}
+
+function round2dec(num) {
+    return Math.round(parseFloat(num) * 100)/100;
 }
